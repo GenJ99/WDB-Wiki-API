@@ -33,50 +33,66 @@ const Article = mongoose.model("Article", articleSchema);
 
 
 
-app.get("/articles", function(req, res) {
-  // FIND all the records within the Article document.
-  // Note: empty condition with only a callback function to
-  // show the entire collection of Article model.
-  Article.find(function(err, foundArticles) {
-    if (!err) {
-      res.send(foundArticles);
-    } else {
-      res.send(err);
-    }
-  });
-});
+//** Requests Targeting all Articles **//
+// Route method is used for /articles to reduces repeat code and errors.
+app.route("/articles")
 
+  .get(function(req, res) {
+    // FIND all the records within the Article document.
+    // Note: empty condition with only a callback function to
+    // show the entire collection of Article model.
+    Article.find(function(err, foundArticles) {
+      if (!err) {
+        res.send(foundArticles);
+      } else {
+        res.send(err);
+      }
+    });
+  })
 
-
-app.post("/articles", function(req, res) {
-  // POST a new article that a client sends. A new model is created with the use of the article
-  // title and content. The newArticle is then saved as a Success response is sent.
-  const newArticle = new Article({
+  .post(function(req, res) {
+    // POST a new article that a client sends. A new model is created with the use of the article
+    // title and content. The newArticle is then saved as a Success response is sent.
+    const newArticle = new Article({
       title: req.body.title,
       content: req.body.content
+    });
+
+    newArticle.save(function(err) {
+      if (!err) {
+        res.send("Successfully added a new article.");
+      } else {
+        res.send(err);
+      }
+    });
+  })
+
+  .delete(function(req, res) {
+    // DELETE a collection from wikiDB. With deleteMany() the method will delete everything within the
+    // the Article model.
+    // NOTE: Wasn't working within the POSTMAN application.
+
+    Article.deleteMany(function(err) {
+      if (!err) {
+        res.send("Successfully deleted all articles.");
+      } else {
+        res.send(err);
+      }
+    });
   });
 
-  newArticle.save(function(err) {
-    if (!err) {
-      res.send("Successfully added a new article.");
+
+//** Requests targeting a specific article **//
+app.route("/articles/:articleTitle")
+
+.get(function(req, res) {
+  // GET one article from the articles collection. The findOne() method is uses as the title key
+  //  and request parameter of articleTitle are the pasted conditions.
+  Article.findOne({title: req.params.articleTitle}, function(err, foundArticle) {
+    if(foundArticle) {
+      res.send(foundArticle);
     } else {
-      res.send(err);
-    }
-  });
-});
-
-
-
-app.delete("/articles", function(req, res) {
-  // DELETE a collection from wikiDB. With deleteMany() the method will delete everything within the
-  // the Article model.
-  // NOTE: Wasn't working within the POSTMAN application.
-
-  Article.deleteMany(function(err) {
-    if (!err) {
-      res.send("Successfully deleted all articles.");
-    } else {
-      res.send(err);
+      res.send("no articles matching that title was found.");
     }
   });
 });
