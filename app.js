@@ -82,38 +82,66 @@ app.route("/articles")
   });
 
 
+
 //** Requests targeting a specific article **//
 app.route("/articles/:articleTitle")
 
-.get(function(req, res) {
-  // GET one article from the articles collection. The findOne() method is uses as the title key
-  //  and request parameter of articleTitle are the pasted conditions.
-  Article.findOne({title: req.params.articleTitle}, function(err, foundArticle) {
-    if(foundArticle) {
-      res.send(foundArticle);
-    } else {
-      res.send("no articles matching that title was found.");
-    }
-  });
-})
-
-.put(function(req, res) {
-  // PUT one article in place of another article. This will not replace one key because if for instance
-  // the content key is updated, then the content will be updated as the title key is erased.
-  // NOTE: better methods for this put request are available. Warning in command line is:
-  // (node:13872) DeprecationWarning: collection.update is deprecated.
-  // Use updateOne, updateMany, or bulkWrite instead.
-  Article.update(
-    {title: req.params.articleTitle},
-    {title: req.body.title, content: req.body.content},
-    {overwrite: true},
-    function(err) {
-      if(!err) {
-        res.send("Successfully updated article.");
+  .get(function(req, res) {
+    // GET one article from the articles collection. The findOne() method is uses as the title key
+    //  and request parameter of articleTitle are the pasted conditions.
+    Article.findOne({
+      title: req.params.articleTitle
+    }, function(err, foundArticle) {
+      if (foundArticle) {
+        res.send(foundArticle);
+      } else {
+        res.send("no articles matching that title was found.");
       }
-    }
-  );
-});
+    });
+  })
+
+  .put(function(req, res) {
+    // PUT one article in place of another article. This will not replace one key because if for instance
+    // the content key is updated, then the content will be updated as the title key is erased.
+    // NOTE: better methods for this PUT request are available. Warning in command line is:
+    // (node:13872) DeprecationWarning: collection.update is deprecated.
+    // Use updateOne, updateMany, or bulkWrite instead.
+    Article.update({
+        title: req.params.articleTitle
+      }, {
+        title: req.body.title,
+        content: req.body.content
+      }, {
+        overwrite: true
+      },
+      function(err) {
+        if (!err) {
+          res.send("Successfully updated article.");
+        }
+      }
+    );
+  })
+
+  .patch(function(req, res) {
+    // PATCH a field in an article. The $set flag within the update() method will change the requested
+    // fields for the body tags.
+    // NOTE: better methods for this PATCH request are available. Warning in command line is:
+    // (node:13872) DeprecationWarning: collection.update is deprecated.
+    // Use updateOne, updateMany, or bulkWrite instead.
+    Article.update({
+        title: req.params.articleTitle
+      }, {
+        $set: req.body
+      },
+      function(err) {
+        if (!err) {
+          res.send("Successfully updated article.");
+        } else {
+          res.send(err);
+        }
+      }
+    );
+  });
 
 
 
