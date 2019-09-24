@@ -48,6 +48,25 @@ app.get("/articles", function(req, res) {
 
 
 
+app.post("/articles", function(req, res) {
+  // POST a new article that a client sends. A new model is created with the use of the article
+  // title and content. The newArticle is then saved as a Success response is sent.
+  const newArticle = new Article({
+      title: req.body.title,
+      content: req.body.content
+  });
+
+  newArticle.save(function(err) {
+    if (!err) {
+      res.send("Successfully added a new article.");
+    } else {
+      res.send(err);
+    }
+  });
+});
+
+
+
 // Port listening
 app.listen(3000, function() {
   console.log("Server listening on port 3000");
