@@ -118,8 +118,7 @@ app.route("/articles/:articleTitle")
         if (!err) {
           res.send("Successfully updated article.");
         }
-      }
-    );
+      });
   })
 
   .patch(function(req, res) {
@@ -139,8 +138,21 @@ app.route("/articles/:articleTitle")
         } else {
           res.send(err);
         }
+      });
+  })
+
+  .delete(function(req, res) {
+    // DELETE a specific article. The deleteOne() method will look for the title condition field and
+    // delete the article associated with it.
+    Article.deleteOne({
+      title: req.params.articleTitle
+    }, function(err) {
+      if (!err) {
+        res.send("Article was deleted successfully.")
+      } else {
+        res.send(err);
       }
-    );
+    });
   });
 
 
