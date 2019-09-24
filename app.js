@@ -33,6 +33,21 @@ const Article = mongoose.model("Article", articleSchema);
 
 
 
+app.get("/articles", function(req, res) {
+  // Find all the records within the Article document.
+  // Note: empty condition with only a callback function to
+  // show the entire collection of Article model.
+  Article.find(function(err, foundArticles) {
+    if (!err) {
+      res.send(foundArticles);
+    } else {
+      res.send(err);
+    }
+  });
+});
+
+
+
 // Port listening
 app.listen(3000, function() {
   console.log("Server listening on port 3000");
