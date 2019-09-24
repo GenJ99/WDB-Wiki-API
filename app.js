@@ -34,7 +34,7 @@ const Article = mongoose.model("Article", articleSchema);
 
 
 app.get("/articles", function(req, res) {
-  // Find all the records within the Article document.
+  // FIND all the records within the Article document.
   // Note: empty condition with only a callback function to
   // show the entire collection of Article model.
   Article.find(function(err, foundArticles) {
@@ -59,6 +59,22 @@ app.post("/articles", function(req, res) {
   newArticle.save(function(err) {
     if (!err) {
       res.send("Successfully added a new article.");
+    } else {
+      res.send(err);
+    }
+  });
+});
+
+
+
+app.delete("/articles", function(req, res) {
+  // DELETE a collection from wikiDB. With deleteMany() the method will delete everything within the
+  // the Article model.
+  // NOTE: Wasn't working within the POSTMAN application.
+
+  Article.deleteMany(function(err) {
+    if (!err) {
+      res.send("Successfully deleted all articles.");
     } else {
       res.send(err);
     }
